@@ -7,9 +7,7 @@ import android.util.Log
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.opensource.svgaplayer.SVGACache
-import com.opensource.svgaplayer.SVGAParser
-import com.opensource.svgaplayer.SVGAVideoEntity
+import com.opensource.svgaplayer.*
 import java.lang.Exception
 import java.net.URL
 
@@ -27,12 +25,29 @@ class RCTSVGAManager : SimpleViewManager<RCTSVGAImageView>() {
   @ReactProp(name = "source")
   fun setSource(view: RCTSVGAImageView, source: String) {
     try {
+      var url = source
+      var imageURL = ""
+      var imageKey = ""
+      if(source.contains("|")){
+        val info = source.split("|")
+        url = info[0]
+        imageURL = info[1]
+        imageKey = info[2]
+      }
       val svgaParser = SVGAParser.shareParser()
       if (source.startsWith("http")) {
-        svgaParser.decodeFromURL(URL(source), object : SVGAParser.ParseCompletion {
+        svgaParser.decodeFromURL(URL(url), object : SVGAParser.ParseCompletion {
           override fun onComplete(videoItem: SVGAVideoEntity) {
-            view.setVideoItem(videoItem)
-            view.startAnimation()
+            if(imageURL.isNotEmpty()){
+              val dynamicEntity = SVGADynamicEntity()
+              dynamicEntity.setDynamicImage(imageURL,imageKey)
+              val drawable = SVGADrawable(videoItem,dynamicEntity)
+              view.setImageDrawable(drawable)
+              view.startAnimation()
+            }else {
+              view.setVideoItem(videoItem)
+              view.startAnimation()
+            }
           }
 
           override fun onError() {}
