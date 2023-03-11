@@ -1,3 +1,12 @@
+## 主要改动
+
+### 1、ios 开启 静音状态也能播放声音
+
+### 2、对 source 进行解析，处理图片替换的情况
+
+`http://xxxx/a.svga`|`http://xxx.a.png`|`imagekey`
+
+
 # react-native-svga
 
 SVGA 是一种同时兼容 iOS / Android / Flutter / Web 多个平台的动画格式。
