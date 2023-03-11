@@ -6,7 +6,14 @@
 
 `http://xxxx/a.svga`|`http://xxx.a.png`|`imagekey`
 
-
+### 3、处理了Android配置的一些不兼容问题，需要在 `Project` -> `build.gradle` 最后面增加
+```gradle
+subprojects { subproject ->
+    if(subproject["name"] == 'react-native-svga'){
+        subproject.configurations { compile { } }
+    }
+}
+```
 
 # react-native-svga
 
