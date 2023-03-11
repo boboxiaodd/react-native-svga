@@ -2,9 +2,10 @@
 
 ### 1、ios 开启 静音状态也能播放声音
 
-### 2、对 source 进行解析，处理图片替换的情况
+### 2、对 source 进行解析，处理图片替换的情况（目前只针对 远程资源 进行处理）
 
 `http://xxxx/a.svga`|`http://xxx.a.png`|`imagekey`
+
 
 
 # react-native-svga
