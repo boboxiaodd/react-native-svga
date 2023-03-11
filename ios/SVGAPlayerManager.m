@@ -11,6 +11,7 @@
 #import "SVGAParser.h"
 #import <objc/runtime.h>
 #import <React/RCTBridge.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface SVGAPlayer (React)<SVGAPlayerDelegate>
 
@@ -34,12 +35,25 @@ static int kReactOnPercentageIdentifier;
 
 - (void)loadWithSource:(NSString *)source {
     SVGAParser *parser = [[SVGAParser alloc] init];
+    NSString * imageURL = nil;
+    NSString * imageKey = nil;
+    if([source containsString:@"|"]){
+        NSArray * params = [source componentsSeparatedByString:@"|"];
+        source = params[0];
+        imageURL = params[1];
+        imageKey = params[2];
+    }
+    
     if ([source hasPrefix:@"http://"] || [source hasPrefix:@"https://"]) {
         [parser parseWithURL:[NSURL URLWithString:source]
              completionBlock:^(SVGAVideoEntity *_Nullable videoItem) {
                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                 [self setVideoItem:videoItem];
-                 [self startAnimation];
+                   if(imageURL){
+                       [self setImageWithURL:[NSURL URLWithString:imageURL] forKey:imageKey];
+                   }
+                   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil]; //静音播放
+                   [self setVideoItem:videoItem];
+                   [self startAnimation];
                }];
              }
                 failureBlock:nil];
@@ -193,6 +207,10 @@ RCT_EXPORT_VIEW_PROPERTY(loops, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(clearsAfterStop, BOOL)
 /// SVGA 动画文件的路径，可以是 URL，或是本地 NSBundle.mainBundle / assets 文件
 RCT_EXPORT_VIEW_PROPERTY(source, NSString)
+/// 替换的图片
+RCT_EXPORT_VIEW_PROPERTY(imageURL, NSString)
+/// 图片对应的Key
+RCT_EXPORT_VIEW_PROPERTY(imageKey, NSString)
 /// 用于控制 SVGA 播放状态，可设定以下值
 /// ‘start’ = 从头开始播放;
 /// ‘pause’ = 从当前位置暂停播放;
