@@ -14,6 +14,7 @@ subprojects { subproject ->
     }
 }
 ```
+### 注意，`onFinished` 后，要设置 `source = null` ，否则会产生2次`source`变动
 
 # react-native-svga
 
